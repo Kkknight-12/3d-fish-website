@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d8322e">
+  <meta name="description" content="Koi Flow — a living illustration. An original fish artwork with flowing fins, a gentle current, and a little everyday wonder.">
+  <title>Koi Flow — A living illustration</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23d8322e'/%3E%3Cpath d='M16 40Q32 4 48 24Q60 44 32 44Q8 44 16 24' fill='none' stroke='%23f3eedc' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="preload" as="image" href="assets/koi.webp">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#controls">Skip to motion controls</a>
+  <main id="journey" class="journey" aria-label="Koi Flow, a three-chapter scroll journey">
+    <section class="poster" aria-label="Living koi illustration">
+      <header class="masthead">
+        <a class="wordmark" href="#journey" aria-label="Koi Flow, return to the surface"><span class="mark" aria-hidden="true">∿</span><span>koi<span class="wordmark-light">flow</span></span></a>
+        <nav class="chapter-nav" aria-label="Journey chapters"><button aria-label="Chapter 1: Flow" data-chapter-target="0" aria-current="step"><span>01</span><span class="chapter-nav-label">Flow</span></button><button aria-label="Chapter 2: Drift" data-chapter-target="0.5"><span>02</span><span class="chapter-nav-label">Drift</span></button><button aria-label="Chapter 3: Wonder" data-chapter-target="0.85"><span>03</span><span class="chapter-nav-label">Wonder</span></button></nav>
+        <button class="about-link" id="about-open" aria-haspopup="dialog">Behind the flow <span aria-hidden="true">↗</span></button>
+      </header>
+
+        <article class="chapter" data-chapter="0" aria-labelledby="hero-title">
+          <div class="chapter-scenery" aria-hidden="true"><span class="world-number">01</span><div class="scene-orbit"></div><span class="world-line"></span></div>
+          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> FIND YOUR OWN CURRENT</div>
+          <h1 id="hero-title" class="chapter-title"><span>STAY</span><span>IN FLOW<span class="title-period">.</span></span></h1>
+          <div class="poem"><span>A little wonder.</span><span>A little every day.</span></div>
+        </article>
+        <article class="chapter chapter-drift" data-chapter="1" aria-labelledby="drift-title">
+          <div class="chapter-scenery" aria-hidden="true"><span class="world-number">02</span><div class="scene-orbit"></div><span class="world-line"></span></div>
+          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> LET THE CURRENT CARRY YOU</div>
+          <h2 id="drift-title" class="chapter-title"><span>GO</span><span>WITH IT<span class="title-period">.</span></span></h2>
+          <div class="poem"><span>Let go a little.</span><span>Find a new rhythm.</span></div>
+        </article>
+        <article class="chapter chapter-wonder" data-chapter="2" aria-labelledby="wonder-title">
+          <div class="chapter-scenery" aria-hidden="true"><span class="world-number">03</span><div class="scene-orbit"></div><span class="world-line"></span></div>
+          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> LEAVE ROOM FOR THE UNEXPECTED</div>
+          <h2 id="wonder-title" class="chapter-title"><span>MAKE</span><span>SPACE<span class="title-period">.</span></span></h2>
+          <div class="poem"><span>Carry the calm.</span><span>Make something new.</span></div>
+        </article>
+
+      <div class="composition" id="stage">
+        <span class="side-note">N° 01 &nbsp; / &nbsp; BUTTERFLY KOI</span>
+        <div class="fish-layer" role="img" aria-label="An ivory, blue and vermilion butterfly koi with long silk-like fins swimming in a flowing current.">
+          <img class="fish-fallback" id="fish-fallback" src="assets/koi.webp" alt="" aria-hidden="true">
+          <canvas id="fish" aria-hidden="true" data-renderer="loading"></canvas>
+          <canvas id="encounter" aria-hidden="true"></canvas>
+        </div>
+        <button class="journey-cue" id="journey-cue"><span class="cue-line" aria-hidden="true"></span><span id="cue-label">Scroll to follow the current</span><span id="cue-arrow" aria-hidden="true">↓</span></button>
+        <span class="chapter-signature" aria-hidden="true">A STUDY IN EVERYDAY WONDER</span>
+      </div>
+
+      <footer class="poster-footer">
+        <span class="journey-progress" aria-hidden="true"></span>
+        <div class="live-note"><span class="live-dot" id="live-dot" aria-hidden="true"></span><span id="motion-status" role="status">Finding the current…</span><span class="chapter-count" id="chapter-count">01 / 03</span></div>
+        <div class="controls" id="controls" aria-label="Motion controls">
+          <fieldset class="currents"><legend>Current</legend><div class="current-options"><button class="current" data-current="0.65" aria-pressed="false">Gentle</button><button class="current is-active" data-current="1" aria-pressed="true">Drift</button><button class="current" data-current="1.4" aria-pressed="false">Lively</button></div></fieldset>
+          <button class="pause-button" id="pause" aria-label="Pause swimming"><span class="pause-symbol" aria-hidden="true">Ⅱ</span><span class="pause-label">Pause</span></button>
+        </div>
+        <span class="footer-note">TAKE A BREATH. KEEP CREATING.</span>
+      </footer>
+    </section>
+  </main>
+
+  <dialog id="about" aria-labelledby="about-title">
+    <button class="close-button" id="about-close" aria-label="Close behind the flow">×</button>
+    <span class="dialog-kicker">KOI FLOW / MOTION STUDY 001</span>
+    <h2 id="about-title">Under the<br><em>surface.</em></h2>
+    <p>Follow the koi from flow to drift to wonder. Near the end, it turns toward you and takes a quiet breath. Take your time; the journey follows your scroll in both directions.</p>
+    <div class="method-grid"><div><span>01 / THE FISH</span><p>Original OpenAI artwork on a deforming mesh, with WebGL or Canvas rendering. The body bends into each turn; the tail follows a little later, while fins keep flowing.</p></div><div><span>02 / THE JOURNEY</span><p>The page scrolls naturally through three chapters. A head-led turn passes through the body to the tail while the fish follows the journey.</p></div></div>
+    <label class="motion-preference"><input type="checkbox" id="reduce-motion"><span>Reduce motion<span class="preference-note">Keep the koi still; scroll the page normally.</span></span></label>
+    <p class="method-note">Pause holds swimming and breathing; you can still scroll to explore. Reduced motion holds the original still pose. A linked spatial spine carries the painted body and flowing fins through the turn. A generated face rotates into view for a quiet breath. This is an illustrated depth study, with simplified anatomy.</p>
+    <a class="prompt-link" href="ARTWORK-PROMPT.md" target="_blank" rel="noopener">Read the artwork prompt <span aria-hidden="true">↗</span></a>
+    <a class="prompt-link" href="VIEW-PROMPTS.md" target="_blank" rel="noopener">Read the matching view prompts <span aria-hidden="true">↗</span></a>
+    <span class="dialog-bottom">Built for curiosity. Made to be taken apart.</span>
+  </dialog>
+  <noscript><style>.journey{height:auto!important}.poster{position:relative!important}.chapter[data-chapter="0"]{opacity:1!important}.chapter-nav,.journey-cue,.current-options,.pause-button{display:none!important}</style><p class="noscript-note">JavaScript is needed for the scroll journey. The original koi illustration is shown above.</p></noscript>
+</body>
+</html>

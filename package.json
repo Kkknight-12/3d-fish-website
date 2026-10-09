@@ -1,0 +1,17 @@
+{
+  "name": "koi-flow-motion-study",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An original OpenAI-generated koi with flowing fins and an articulated painted depth turn on a native-scrolling page.",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs --dist",
+    "test": "node --test scripts/motion.test.mjs scripts/scroll.test.mjs scripts/canvas.test.mjs scripts/spine.test.mjs scripts/views.test.mjs scripts/pose-3d.test.mjs",
+    "check": "node --check app.js && node --check motion.js && node --check canvas-renderer.js && node --check spine.js && node --check silhouette.js && node --check scroll.js && node --check fish-bounds.js && node --check scripts/serve.mjs && node --check view-beat.js && node --check view-renderer.js && node --check pose-3d.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

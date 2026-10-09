@@ -1,0 +1,25 @@
+# Generated output, dependencies and local evidence
+dist/
+node_modules/
+evidence/
+checkpoints/
+coverage/
+.cache/
+.vite/
+tmp/
+temp/
+*.log
+.DS_Store
+
+# Local configuration, credentials and private notes
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+*.pem
+*.key
+credentials.json
+private-notes/
+PRIVATE-NOTES*
+*.local.md
