@@ -1,4 +1,6 @@
-import {ramp} from './view-beat.js';
+import {deformPectoralPoint} from './fin-geometry.js';
+import {bodyContour,bodySkinPoint} from './body-geometry.js';
+import {ramp,breathOpening} from './view-beat.js';
 import {preparePoint,writePoint} from './spine.js';
 import {TAU,LOOP_SECONDS} from './motion.js';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -50,6 +52,62 @@ export function surfacePoint(motion,seconds,strength,column,aspect,out={},wave={
   const curl=fin*(-.17*Math.sin((.86-motion.u)*6)+strength*.055*Math.sin(phase*2+motion.y*6))
     +tail*(motion.y*.16+strength*.085*Math.sin(phase*2-motion.u*7.4+motion.y*4));
   return framePoint(column,wave.x,lateral,dome+curl,out);
+}
+// Unfold the existing pectoral planes around their painted roots as the body
+// faces the camera. Preserve the source fan outline and the swimming field;
+// there is no extra fin, width stretch or independently moving attachment.
+// The painted fin border is attached to the same analytic skin edge as the
+// closed trunk. Preserve source waves; change only the out-of-plane collar.
+export function attachedFinSurface(motion,seconds,strength,column,aspect,out={},wave={}){
+  surfacePoint(motion,seconds,strength,column,aspect,out,wave);
+  if(motion.u<.625||motion.u>.89)return out;
+  const uv=1-motion.v,profile=bodyContour(motion.u,aspect);
+  // The source-alpha cutout runs through affine sheet triangles, not only
+  // their vertices. Carry the skin correction through one full coarse row
+  // INSIDE the erased body so those triangles cannot interpolate between a
+  // corrected fin and an uncorrected interior vertex at the visible border.
+  // Only the masked inner collar fades; the actual edge has zero fade slope.
+  const upperDistance=uv-profile.top,lowerDistance=profile.bottom-uv;
+  const edgeV=upperDistance<=lowerDistance?profile.top:profile.bottom;
+  const inside=Math.max(0,Math.min(upperDistance,lowerDistance));
+  const collar=1-ramp(.085,.135,inside);
+  if(collar===0)return out;
+  const edgeMotion=preparePoint(motion.u,1-edgeV),edge=surfacePoint(edgeMotion,seconds,strength,column,aspect,{},{});
+  const oldZ=-(edge.x-column[0])*column[3]*column[6]-(edge.y-column[1])*column[4]*column[6]+(edge.z-column[2])*column[5];
+  const newZ=bodySkinPoint(motion.u,edgeV,aspect).z;
+  const dz=(newZ-oldZ)*ramp(.625,.665,motion.u)*collar;
+  out.x-=dz*column[3]*column[6];out.y-=dz*column[4]*column[6];out.z+=dz*column[5];
+  return out;
+}
+export function pectoralSurfacePoint(motion,seconds,strength,column,aspect,out={},wave={}){
+  attachedFinSurface(motion,seconds,strength,column,aspect,out,wave);
+  return deformPectoralPoint(motion,seconds,strength,column,aspect,out,wave,attachedFinSurface,(u,side,a)=>{const b=bodyContour(u,a);return side>0?b.top:b.bottom;});
+}
+// Keep the original face paint on the same surface as its neck and pectorals.
+// Only head height changes: every boundary is welded to the original surface,
+// and zero pitch projects to the original artwork without a material switch.
+export function headSurfacePoint(motion,seconds,strength,column,aspect,out={},wave={}){
+  pectoralSurfacePoint(motion,seconds,strength,column,aspect,out,wave);
+  const imageV=1-motion.v,lateral=wave.y*aspect;
+  const blend=ramp(HEAD_JOIN_U,.88,motion.u)*ramp(HEAD_PAINT_TOP,.43,imageV)*(1-ramp(.64,HEAD_PAINT_BOTTOM,imageV));
+  const along=(motion.u-.855)/.145,across=(lateral+.0175)/.095;
+  const cap=.230*Math.sqrt(Math.max(0,1-along*along-across*across))-.095*(1-ramp(.99,1,motion.u));
+  const body=ramp(.38,.55,motion.u)*(1-ramp(.91,1,motion.u));
+  const dome=.105*Math.sqrt(Math.max(0,1-(lateral/.10)**2))*body;
+  const lip=Math.max(0,1-((motion.u-.982)/.022)**2-((imageV-.538)/.037)**2);
+  const lift=(cap-dome+.003*lip*(breathOpening(seconds)-.3))*blend;
+  out.x-=lift*column[3]*column[6];out.y-=lift*column[4]*column[6];out.z+=lift*column[5];
+  return out;
+}
+// A closed ovoid replaces the open head height field during the depth turn.
+// Source UVs and the frontal chart live on this single surface, rather than
+// rendering another face in front of the original. The rear overlaps the
+// existing neck; all points still follow the accepted columns and wave clock.
+export function volumeSurfacePoint(motion,volumeZ,frontU,frontV,seconds,strength,column,aspect,out={},wave={},axialOffset=0){
+  writePoint(motion,seconds/LOOP_SECONDS*TAU,strength,straight,aspect,wave);
+  const lip=Math.max(0,1-((frontU-.50)/.09)**2-((frontV-.835)/.045)**2)*ramp(.80,.88,motion.u);
+  const z=volumeZ-.008*lip*(breathOpening(seconds)-.3);
+  return framePoint(column,wave.x+axialOffset,wave.y*aspect,z,out);
 }
 export function framePoint(column,x,y,z,out={}){
   const [cx,cy,cz,c,s,cp,sp]=column;

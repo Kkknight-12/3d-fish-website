@@ -1,24 +1,21 @@
-# Known issues and verification scope
+# Verification scope and remaining limits
 
-This checkpoint preserves an original illustrated koi with flowing fins, a delayed spine and a turn toward the viewer. It is an unfinished procedural approximation, not a seamless animated anatomical model.
+Revision 6 retains the closed body, attached pectoral fans, and accepted motion from revision 5. Fixed intrinsic eyes and a single original dorsal forehead material replace the former face/eye chart dissolve.
 
-## Current visual defects
+## Remaining visual limits
 
-- Face paint stretches during oblique and frontal poses. Some transition states can read as a doubled face or a stretched head patch. The painted head and neck do not maintain one seamless identity across the turn.
-- Thin extra fin fragments and disconnected fin shapes remain visible at some angles. A gap can appear where the right pectoral fin meets the body.
-- Average-depth sorting of painted triangles approximates fin occlusion. It does not provide complete anatomical geometry or exact transparency ordering.
-- The overhead and frontal artwork were generated separately. Their markings and fin shapes differ; deforming them cannot produce exact views of one fish.
+- This is a painted 2.5D procedural approximation rather than a fully anatomical skinned model or generated video.
+- Small low-angle muzzle facets and a pale cheek rim near frontal angles remain visible in enlarged crops. The ivory muzzle is simpler than the original illustration.
+- Frontal whiskers/barbels are absent. The original top-view barbels are trimmed during the depth turn.
+- Broad butterfly fins, flowing tail folds, and average-depth Canvas sorting remain illustrative approximations. Water/background effects remain deferred.
+- Spatial WebGL batching remains an unused experimental module; the tested encounter renderer uses Canvas.
 
-The current tail motion and overall turn are the preserved baseline. Repairing face and fin defects should avoid changing that accepted choreography. Water effects remain deferred.
+## Verification
 
-## How it is animated
+61 automated tests, JavaScript syntax checks, and the static build pass. The eye repair preserves the body facets, fin/tail geometry, and protected motion modules. Tests cover finite closed geometry, attached roots, preserved projections/tail, eye-chart metric/tessellation error, and bounded volume raster overlap.
 
-The overhead artwork is deformed by a six-bone spine and the preserved ten-second fin/tail field. The encounter adds delayed pitch, projected painted body and fins, and a cropped frontal painting on a curved head surface. Local lip deformation gives an approximate 3.6-second breathing cycle. Canvas is the default; an optional WebGL route deforms the overhead artwork. This is not generated video.
+Actual Mac Chrome checks covered native forward/reverse journeys at 1180×757 and 390×844, the user-reported desktop retreat progress `.911177` (expected 59.138° head pitch), and eight-second frontal idle. Both eyes remained intact in the reviewed forward/reverse retreat captures. Pause froze the swim clock and produced five identical visible-canvas samples; resume and in-app reduced motion passed at 1180×757 and 320×662. Installed browser code and all 30 production files were checked against source/dist/HTTP hashes.
 
-## Verification limits
+Cloud review additionally covered dense frozen 5° angle sweeps, the exact retreat pose, and independent visual review of actual forward/reverse and idle motion recordings. Recordings captured only the artwork canvas (1165×564 under the 1180×757 page viewport); typography, layout, and controls were documented in separate screenshots. These evidence files and local backups are excluded from this repository.
 
-The current implementation passed 32 automated tests, JavaScript syntax checks and the static build. Browser verification covered pause, reduced-motion controls, desktop and mobile-sized layouts, bounded framing and forward/reverse scrolling. Later visual review confirmed the face and fin defects listed above; passing mathematical and control tests does not mean the visuals are finished.
-
-Mobile layout was checked in desktop Chrome viewports. Hardware touch and native operating-system preference switching were not exercised. Frame pacing and artwork draw cadence vary by device; no universal frame-rate claim is made. The precise animation method of the inspirational reel is unknown.
-
-The OpenAI generation tool did not expose a verifiable model version. Original PNGs, compressed browser WebPs and exact generation prompts are retained in this repository.
+Responsive checks use logical desktop Chrome viewports rather than physical phones or touch hardware. No universal frame-rate guarantee is made. OS motion-preference switching and a new genuine GPU context-loss test were not established; in-app reduced motion and available Canvas/static fallbacks were checked separately. The OpenAI generation tool did not expose a verifiable model version. Original artwork and exact generation prompts remain in the repository.

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createTurn,stepTurn,spineColumns,preparePoint,writePoint} from '../spine.js';
-import {DEPTH_STRIDE,isDorsalHead,restPitch,turnPitch,createDepthTurn,stepDepthTurn,depthColumns,surfacePoint,facePoint3D,project3D,fitProjection} from '../pose-3d.js';
+import {DEPTH_STRIDE,isDorsalHead,restPitch,turnPitch,createDepthTurn,stepDepthTurn,depthColumns,surfacePoint,pectoralSurfacePoint,headSurfacePoint,HEAD_JOIN_U,HEAD_PAINT_TOP,HEAD_PAINT_BOTTOM,facePoint3D,project3D,fitProjection} from '../pose-3d.js';
 import {LOOP_SECONDS,TAU} from '../motion.js';
 const near=(a,b,t=1e-6)=>assert.ok(Math.abs(a-b)<t,`${a} ≠ ${b}`);
 test('zero pitch retains the approved articulated swimming projection',()=>{
@@ -55,5 +55,62 @@ test('projected paint fits mobile and desktop without changing aspect or upscali
     const fit=fitProjection(bounds,w,h,16),box=bounds.map((v,i)=>v*fit.scale+(i%2?fit.y:fit.x));
     assert.ok(fit.scale>0&&fit.scale<=1);assert.ok(box[0]>=16-1e-7&&box[1]>=16-1e-7);assert.ok(box[2]<=w-16+1e-7&&box[3]<=h-16+1e-7);
     near((box[2]-box[0])/(box[3]-box[1]),(bounds[2]-bounds[0])/(bounds[3]-bounds[1]));
+  }
+});
+
+test('original head paint keeps its overhead projection and all neck/fin boundaries',()=>{
+  const yaw=createTurn(25),d=createDepthTurn();
+  for(const pitch of [0,.15,.6,1.2,Math.PI/2]){
+    d.angles.forEach((_,i)=>d.angles[i]=restPitch(pitch,i));const columns=depthColumns(yaw,d,72);
+    for(const seconds of [0,.8,2.5,5,7.5,10])for(const [u,v] of [[HEAD_JOIN_U,.5],[.86,HEAD_PAINT_TOP],[.93,HEAD_PAINT_BOTTOM],[1,.5],[.93,.453],[.934,.606],[.982,.538]]){
+      const motion=preparePoint(u,1-v),column=columns.subarray(Math.round(u*72)*7,Math.round(u*72)*7+7);
+      const original=pectoralSurfacePoint(motion,seconds,1.4,column,.5,{}),head=headSurfacePoint(motion,seconds,1.4,column,.5,{});
+      for(const key of ['x','y','z'])assert.ok(Number.isFinite(head[key]));
+      if(pitch===0){near(head.x,original.x);near(head.y,original.y);}
+      if(u===HEAD_JOIN_U||u===1||v===HEAD_PAINT_TOP||v===HEAD_PAINT_BOTTOM)for(const key of ['x','y','z'])near(head[key],original[key]);
+    }
+  }
+});
+test('breathing moves the original nose locally while both original eyes remain anchored',()=>{
+  const yaw=createTurn(270),d=createDepthTurn(Math.PI/2),columns=depthColumns(yaw,d,72);
+  const sample=(u,v,t)=>headSurfacePoint(preparePoint(u,1-v),t,0,columns.subarray(Math.round(u*72)*7,Math.round(u*72)*7+7),.5,{});
+  for(const [u,v] of [[.933,.453],[.934,.606]]){
+    const still=sample(u,v,0);for(const t of [.9,1.8,2.7,3.6]){const next=sample(u,v,t);for(const key of ['x','y','z'])near(next[key],still[key]);}
+  }
+  const closed=sample(.982,.538,0),open=sample(.982,.538,1.8),loop=sample(.982,.538,3.6);
+  assert.ok(Math.hypot(open.x-closed.x,open.y-closed.y,open.z-closed.z)>.0005);
+  for(const key of ['x','y','z'])near(loop[key],closed[key]);
+});
+test('the head correction preserves tail XYZ and masked body overhead XY',()=>{
+  const yaw=createTurn(35),d=createDepthTurn();
+  for(const pitch of [0,.7,Math.PI/2,.7,0]){
+    d.angles.forEach((_,i)=>d.angles[i]=restPitch(pitch,i));const columns=depthColumns(yaw,d,72);
+    for(const seconds of [0,2,5,8,10])for(const u of [.02,.15,.35,.55,.7,.80])for(const v of [.1,.5,.9]){
+      if(u>.60&&v!==.5)continue; // These outside points are pectorals, not protected tail/body.
+      const motion=preparePoint(u,v),column=columns.subarray(Math.round(u*72)*7,Math.round(u*72)*7+7);
+      const old=surfacePoint(motion,seconds,1.4,column,.5,{}),next=headSurfacePoint(motion,seconds,1.4,column,.5,{});
+      // Front-body sheet pixels are erased by the continuous skin cutout.
+      // Their interior collar may change depth to weld adjacent visible fins.
+      // Protected tail geometry must remain identical at EVERY pitch.
+      if(u<=.60)for(const key of ['x','y','z'])near(old[key],next[key]);
+      else if(pitch===0)for(const key of ['x','y'])near(old[key],next[key]);
+      for(const key of ['x','y','z'])assert.ok(Number.isFinite(next[key]));
+    }
+  }
+});
+
+test('pectoral replacement preserves tail and every zero-pitch screen projection',()=>{
+  const yaw=createTurn(40),d=createDepthTurn();
+  for(const pitch of [0,.5,1,Math.PI/2,1,.5,0]){
+    d.angles.fill(pitch);const columns=depthColumns(yaw,d,72);
+    for(const seconds of [0,2.5,5,7.5,10])for(const u of [.55,.65,.75,.842,.9])for(const v of [.1,.3,.5,.7,.9]){
+      const motion=preparePoint(u,v),column=columns.subarray(Math.round(u*72)*7,Math.round(u*72)*7+7);
+      const old=surfacePoint(motion,seconds,1.4,column,.5,{}),next=pectoralSurfacePoint(motion,seconds,1.4,column,.5,{});
+      if(pitch===0)for(const key of ['x','y'])near(old[key],next[key]);
+      // Masked front-body center points belong to the attachment collar;
+      // their overhead XY is checked above, while tail XYZ stays protected.
+      if(u<=.60)for(const key of ['x','y','z'])near(old[key],next[key]);
+      for(const key of ['x','y','z'])assert.ok(Number.isFinite(next[key]));
+    }
   }
 });

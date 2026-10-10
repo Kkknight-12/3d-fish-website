@@ -178,12 +178,13 @@ function fishLayout(width,height,image){
   layoutCache={sceneVersion,turnVersion:turn.version,width,height,pose};return pose;
 }
 function renderFrame(){
-  const spatialActive=Boolean(viewRenderer&&(viewRenderer.diagnostic||beat.active||viewRenderer.hasDepth()));
+  const spatialActive=Boolean(!failed&&viewRenderer&&(viewRenderer.diagnostic||beat.active||viewRenderer.hasDepth()));
   const overheadOpacity=spatialActive?0:1;
   if(lastOpacity!==overheadOpacity){canvas.style.opacity=String(overheadOpacity);lastOpacity=overheadOpacity;}
   if(renderer&&!spatialActive)renderer.render(elapsed,current,tiltX,tiltY);
   else if(!renderer&&artwork){const p=fishLayout(stageWidth,stageHeight,artwork);fallback.style.width=`${p.fishWidth}px`;fallback.style.left=`${p.centerX}px`;fallback.style.top=`${stageHeight-p.centerY}px`;fallback.style.transform=`translate(-50%,-50%) rotate(${-p.angle}deg)`;}
-  viewRenderer?.render(beat,elapsed,current,choreography.progress,tiltX,tiltY);
+  encounterCanvas.style.visibility=failed?'hidden':'';
+  if(!failed)viewRenderer?.render(beat,elapsed,current,choreography.progress,tiltX,tiltY);
 }
 function tick(now){
   raf=0;if(document.hidden)return;
@@ -329,6 +330,7 @@ measure(true);
 const image = new Image();
 image.onload = () => {
   artwork=image;
+  if(query.get('renderer')==='still'){useStillArtwork('Requested still-renderer QA route');return;}
   try {
     // A documented local QA route exercises the fallback without GPU settings.
     // Matched local observations favored predictable Canvas pacing. WebGL is an
@@ -347,8 +349,9 @@ image.onerror = () => { useStillArtwork('Artwork failed to load'); status.textCo
 image.src = 'assets/koi.webp';
 
 function loadView(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src;});}
-Promise.all([loadView('assets/koi.webp'),loadView('assets/koi-front.webp')]).then(([original,front])=>{
+Promise.all([loadView('assets/koi.webp'),loadView('assets/koi-face-proof-v4-ivory.png')]).then(([original,front])=>{
   viewRenderer=createViewRenderer(encounterCanvas,original,front,fishLayout,pixelBudget,{diagnostic:query.get('qa')==='spine'});
   viewRenderer.reset(choreography.progress,reduced);
   encounterCanvas.dataset.views='ready';paintedProgress=-1;paintStory();renderFrame();requestTick();
+  if(query.get('qa')==='lose-spatial-context')requestAnimationFrame(()=>viewRenderer.qaLoseContext());
 }).catch(()=>{encounterCanvas.dataset.views='unavailable';console.warn('Matching views could not load; the original swimming artwork remains available.');});
