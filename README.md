@@ -33,7 +33,7 @@ Visual inspiration came from [Marina Budarina's reel](https://www.instagram.com/
 
 `view-renderer.js` draws the original painted fin/tail sheet and a 1,540-triangle closed body/head volume on Canvas. It culls back faces and sorts visible triangles by average depth. `reference-fit.js` keeps the accepted fitting transform and path while anatomy changes; it never paints its reference geometry. The target is 30 artwork drawings per second on the shared RAF clock. Both routes cap DPR at 1.5 and use a 1.1-million-pixel budget; device performance varies.
 
-The mouth uses localized lip deformation over a 3.6-second breathing cycle. A fixed intrinsic eye/skin atlas anchors both eyes to the same cheek surface and retains the original forehead marking throughout the turn. The generated lower face approximates unseen anatomy. Small muzzle facets, a pale cheek rim, average-depth fin sorting, and missing frontal whiskers remain limitations; see [KNOWN-ISSUES.md](KNOWN-ISSUES.md).
+The mouth uses localized lip deformation over a 3.6-second breathing cycle. A fixed intrinsic eye/skin atlas anchors both eyes to the same cheek surface and retains the original forehead marking throughout the turn. The generated lower face approximates unseen anatomy. Small muzzle facets, a pale cheek rim, and average-depth fin sorting remain limitations; see [KNOWN-ISSUES.md](KNOWN-ISSUES.md).
 
 ## Native scroll and controls
 
@@ -54,7 +54,7 @@ See [KNOWN-ISSUES.md](KNOWN-ISSUES.md) for current visual limitations and verifi
 - `?profile=1` records rolling 180-RAF windows after warmup; RAF cadence and CPU submission are separate from artwork draw cadence and GPU completion.
 - `#encounter` exposes pitch, pose progress, mouth opening and fitted bounds. Its old values can remain after the Canvas is cleared; `waveSeconds` is the active spatial-wave clock; `#fish` describes the overhead route and may remain unchanged while that route is hidden.
 
-Revision 6 passes 61 automated tests, JavaScript syntax checks, and the static build. Mac browser checks exercised native forward/reverse scrolling at 1180×757 and 390×844, the reported retreat progress `.911177`, and eight-second frontal idle animation. Pause/resume and in-app reduced motion passed at 1180×757 and 320×662. All 30 built production files matched their source and localhost HTTP bytes. Cloud review additionally covered frozen 5° angle sweeps and canvas-only motion recordings. Physical mobile hardware, native OS preference switching, and a new genuine GPU context-loss test were not exercised.
+Revision 6 with the whisker restoration passes 66 automated tests, JavaScript syntax checks, and the static build. Baseline Mac browser checks exercised native forward/reverse scrolling at 1180×757 and 390×844, the reported retreat progress `.911177`, and eight-second frontal idle animation. Pause/resume and in-app reduced motion passed at 1180×757 and 320×662. All 31 built production files match their source and localhost HTTP bytes. Cloud review additionally covered frozen 5° angle sweeps and canvas-only motion recordings. Physical mobile hardware, native OS preference switching, and a new genuine GPU context-loss test were not exercised.
 
 ## Source guide
 
@@ -64,6 +64,7 @@ Revision 6 passes 61 automated tests, JavaScript syntax checks, and the static b
 | `motion.js`, `spine.js`, `scroll.js`, `view-beat.js` | Preserved swimming field, yaw bones, native-scroll path, and encounter timing. |
 | `pose-3d.js`, `body-geometry.js`, `fin-geometry.js` | Delayed pitch bones, continuous closed skin, and smooth rooted pectoral fans. |
 | `eye-atlas.js`, `volume-raster.js`, `view-renderer.js` | Fixed eye charts baked into opaque skin, volume texture padding/edge overlap, and Canvas painting. |
+| `mouth-barbels.js` | Tapered mouth-local whiskers attached to the posed lip triangles and sorted with the fish. |
 | `head-geometry.js`, `reference-fit.js` | Face registration/proof geometry and the preserved framing reference. |
 | `spatial-painter.js` | Retained experimental GPU batching; it is not selectable by the app. |
 | `qa.html`, `qa-pose.html`, `qa-suite.html`, `qa-suite.js` | Fixed-angle, exact-viewport, and real-page native-scroll QA harnesses. Excluded from the production build. |
@@ -78,3 +79,9 @@ The closed body/head and smooth attached pectorals from revision 5 preserve the 
 Revision 6 repairs the squeezed/erased eyes at retreat progress `.911177` (about 59.138° head pitch in the reported desktop viewport). Each eye has one fixed intrinsic chart on the existing cheek surface. Eyes and original dorsal paint are baked into one opaque skin atlas so neighboring expanded triangles cannot erase the pupils. The original red forehead marking stays fixed; the former displaced face/eye chart dissolve is removed.
 
 Volume-only edge-normal raster overlap and replicated texture padding cover snout triangle seams while retaining the original fin/tail rasterization. Eye subdivision is reduced from eight to four steps after projection-error checks, lowering volume triangles from 3,268 to 1,540. No new artwork was generated for revision 6.
+
+## Whisker restoration (2026-10-10)
+
+`mouth-barbels.js` adds a tapered ivory pair bound to the existing mouth-corner triangles. Roots follow the posed lips, including breathing; the curves rotate in the head frame and share the fish's depth sorting. Original painted barbels retire over `.22–.30` radians (about 13–17°), before the new pair appears over `.30–.36` radians (about 17–21°), so the two pairs never overlap. The existing images, eye/body/fin/tail geometry, swimming clock, scroll path, and framing stay unchanged. No new image was generated.
+
+Five added tests cover exact lip attachment through 736 forward/reverse poses, finite tapered curves, handover without an overlapping pair, eye clearance, and renderer/build integration. New local browser review at 1180×757 covers 25 forward/reverse checkpoints through the shallow handover, frontal idle, retreat, and pause/resume/reduced motion; the delicate tips may be less visible at small display sizes.

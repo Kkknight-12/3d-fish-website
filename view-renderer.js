@@ -1,3 +1,4 @@
+import {createMouthBarbels,projectMouthBarbels,barbelVisibility} from './mouth-barbels.js';
 import {volumeClipPolygon,padVolumeTexture} from './volume-raster.js';
 import {eyeCharts,intrinsicEyeUV,refineEyeSurface,eraseTextureEyes,makeEyeTexture,anatomicalFaceUV,makeIntrinsicSkinAtlas,intrinsicSkinUV} from './eye-atlas.js';
 import {buildContinuousBody,bodyContour,CONTINUOUS_BODY_JOIN} from './body-geometry.js';
@@ -89,8 +90,8 @@ export function createViewRenderer(canvas,originalImage,frontImage,getLayout,pix
     [[.435,.606],[.49,.606],[.52,.618],[.60,.650],[.69,.685],[.695,.726],[.60,.747],[.50,.736],[.435,.716]]
   ];
   for(const poly of minorMasks){minorCtx.beginPath();poly.forEach(([u,v],i)=>{if(i)minorCtx.lineTo(u*finImage.width,v*finImage.height);else minorCtx.moveTo(u*finImage.width,v*finImage.height);});minorCtx.closePath();minorCtx.fill();}
-  let lastFinTrim=-1;
-  function updateFinTrim(trim){if(trim===lastFinTrim)return;minorCtx.globalCompositeOperation='copy';minorCtx.globalAlpha=1;minorCtx.drawImage(finImage,0,0);minorCtx.globalCompositeOperation='destination-out';minorCtx.globalAlpha=trim;for(const poly of minorMasks){minorCtx.beginPath();poly.forEach(([u,v],i)=>{if(i)minorCtx.lineTo(u*finImage.width,v*finImage.height);else minorCtx.moveTo(u*finImage.width,v*finImage.height);});minorCtx.closePath();minorCtx.fill();}minorCtx.globalAlpha=1;lastFinTrim=trim;}
+  let lastFinTrim=-1,lastBarbelTrim=-1;
+  function updateFinTrim(trim,barbelTrim){if(trim===lastFinTrim&&barbelTrim===lastBarbelTrim)return;minorCtx.globalCompositeOperation='copy';minorCtx.globalAlpha=1;minorCtx.drawImage(finImage,0,0);minorCtx.globalCompositeOperation='destination-out';for(const [index,poly] of minorMasks.entries()){minorCtx.globalAlpha=index===0?barbelTrim:trim;minorCtx.beginPath();poly.forEach(([u,v],i)=>{if(i)minorCtx.lineTo(u*finImage.width,v*finImage.height);else minorCtx.moveTo(u*finImage.width,v*finImage.height);});minorCtx.closePath();minorCtx.fill();}minorCtx.globalAlpha=1;lastFinTrim=trim;lastBarbelTrim=barbelTrim;}
   makeMesh(finImage);
   const skinTexture=image=>{const c=document.createElement('canvas');c.width=image.width;c.height=image.height;const g=c.getContext('2d');g.fillStyle='#eee4cf';g.fillRect(0,0,c.width,c.height);g.drawImage(image,0,0);return c;};
   const opaqueOriginal=eraseTextureEyes(skinTexture(originalImage)),opaqueFront=eraseTextureEyes(skinTexture(frontImage),true);
@@ -122,7 +123,9 @@ export function createViewRenderer(canvas,originalImage,frontImage,getLayout,pix
     meshes.push({volume:true,vertices,triangles});
   }
   makeFittedVolume();
-  const triangles=meshes.flatMap(m=>m.triangles),paint=[];
+  const volumeMesh=meshes.find(m=>m.volume);
+  const barbels=createMouthBarbels(volumeMesh.vertices,volumeMesh.triangles);
+  const triangles=[...meshes.flatMap(m=>m.triangles),...barbels.triangles],paint=[];
   canvas.dataset.tiles=meshes.map(m=>m.triangles.length).join('/');canvas.dataset.targetRate='30';canvas.dataset.paintSources='continuous-skin-intrinsic-eyes';canvas.dataset.pectoralLayers='1';canvas.dataset.headJoin='continuous-closed-body';canvas.dataset.method=diagnostic?'shared-spatial-spine-diagnostic':'continuous-skin-curved-root-proof';
   let width=0,height=0,dpr=1,wasVisible=false,lastDraw=-Infinity,target=0;
   const fitted={scale:1,x:0,y:0};
@@ -148,7 +151,7 @@ export function createViewRenderer(canvas,originalImage,frontImage,getLayout,pix
     const visible=diagnostic||beat.active||hasDepth();if(!visible&&!wasVisible)return;
     const now=performance.now();if(visible&&wasVisible&&now-lastDraw<30)return;
     const pose=getLayout(width,height,originalImage);depthColumns(pose.turn,depth,72,columns);
-    updateFinTrim(ramp(.08,.30,depth.angles[0]));
+    updateFinTrim(ramp(.08,.30,depth.angles[0]),ramp(.22,.30,depth.angles[0]));
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,width,height);
     if(visible){
       for(const mesh of meshes)for(const v of mesh.vertices){
@@ -157,12 +160,16 @@ export function createViewRenderer(canvas,originalImage,frontImage,getLayout,pix
         const local=mesh.volume?volumeSurfacePoint(v.motion,v.volumeZ,v.frontU,v.frontV,seconds,strength,v.column,aspect,v.local,v.wave,0):mesh.region?headSurfacePoint(v.motion,seconds,strength,v.column,aspect,v.local,v.wave):pectoralSurfacePoint(v.motion,seconds,strength,v.column,aspect,v.local,v.wave);
         point(local,pose,tx,ty,v);
       }
+      const barbelAlpha=barbelVisibility(depth.angles[0]);
+      projectMouthBarbels(barbels,head,p=>point(p,pose,tx,ty));
       paint.length=0;
-      for(const t of triangles){const p=t.p,q=t.q,r=t.r,area=(q.x-p.x)*(r.y-p.y)-(q.y-p.y)*(r.x-p.x);if(t.volume?area>=-.015:t.face?area<=.015:Math.abs(area)<=.015)continue;t.depth=(p.z+q.z+r.z)/3;paint.push(t);}
+      for(const t of triangles){const p=t.p,q=t.q,r=t.r,area=(q.x-p.x)*(r.y-p.y)-(q.y-p.y)*(r.x-p.x);if(t.barbel&&barbelAlpha===0)continue;if(t.volume||t.barbel?area>=-.015:t.face?area<=.015:Math.abs(area)<=.015)continue;t.depth=(p.z+q.z+r.z)/3;paint.push(t);}
       const bounds=[Infinity,Infinity,-Infinity,-Infinity];
       for(const t of paint)for(const v of [t.p,t.q,t.r]){bounds[0]=Math.min(bounds[0],v.x);bounds[1]=Math.min(bounds[1],v.y);bounds[2]=Math.max(bounds[2],v.x);bounds[3]=Math.max(bounds[3],v.y);}
       computeReferenceFit(referenceFit,pose,columns,seconds,strength,width,height,tx,ty,fitted);
       for(const mesh of meshes)for(const v of mesh.vertices){v.x=v.x*fitted.scale+fitted.x;v.y=v.y*fitted.scale+fitted.y;}
+      for(const v of barbels.vertices){v.x=v.x*fitted.scale+fitted.x;v.y=v.y*fitted.scale+fitted.y;}
+      canvas.dataset.barbels=barbelAlpha>0?'mouth-local-pair':'original-painted-pair';canvas.dataset.barbelOpacity=barbelAlpha.toFixed(4);
       canvas.dataset.fittedBounds=JSON.stringify(bounds.map((v,i)=>+(v*fitted.scale+(i%2?fitted.y:fitted.x)).toFixed(2)));
       canvas.dataset.fitScale=fitted.scale.toFixed(4);canvas.dataset.fitReference='preserved-handoff';canvas.dataset.fitOffset=JSON.stringify([fitted.x,fitted.y]);
       if(diagnostic)drawDiagnostic(pose,seconds,strength,tx,ty);
@@ -172,6 +179,7 @@ export function createViewRenderer(canvas,originalImage,frontImage,getLayout,pix
       paint.sort((a,b)=>a.depth-b.depth);
       for(const t of paint){
         const p=t.p,q=t.q,r=t.r,mx=(p.x+q.x+r.x)/3,my=(p.y+q.y+r.y)/3,dx1=q.x-p.x,dx2=r.x-p.x,dy1=q.y-p.y,dy2=r.y-p.y;
+        if(t.barbel){ctx.save();ctx.globalAlpha=barbelAlpha;ctx.fillStyle=t.color;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.lineTo(r.x,r.y);ctx.closePath();ctx.fill();ctx.restore();continue;}
         // Register frontal anatomy as soon as the head begins to expose its sides.
         // A long material dissolve showed two differently placed sets of eyes.
         const weight=t.volume?ramp(.75,1.25,depth.angles[0]):0;
