@@ -1,4 +1,4 @@
-const $=s=>document.querySelector(s),frame=$('#app'),points=[0,.54,.66,.72,.82,.911177,.95,1];
+const $=s=>document.querySelector(s),frame=$('#app'),points=[0,.12,.30,.43,.54,.66,.70,.72,.82,.865,.911177,.95,1];
 let viewport=[1440,900],serial=0,events=[],runFrames=[],lastFrame=0,recording=null,captureFrame=null;
 const win=()=>frame.contentWindow,doc=()=>frame.contentDocument,el=s=>doc()?.querySelector(s);
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -24,7 +24,7 @@ async function settleCheckpoint(target,id){
     samples.push({at:now,pitch});samples=samples.filter(v=>now-v.at<=1000);
     const windowMS=samples.length?now-samples[0].at:0,pitches=samples.map(v=>v.pitch).filter(Number.isFinite),pitchRange=pitches.length?Math.max(...pitches)-Math.min(...pitches):null;
     latest={target,motion,visible,progressError:Math.abs(motion-target),headPitch:Number.isFinite(pitch)?pitch:null,headPitchRange: pitchRange,observationWindowMS:Math.round(windowMS),elapsedMS:Math.round(now-start)};
-    if(now-start>=1200&&windowMS>=750&&Math.abs(motion-target)<.003&&Math.abs(visible-target)<.003&&pitchRange!==null&&pitchRange<.5)return{settled:true,...latest,note:'Progress within .003 and head-pitch range < 0.5° over ≥750ms; visual review remains required.'};
+    if(now-start>=1200&&windowMS>=750&&Math.abs(motion-target)<.003&&Math.abs(visible-target)<.003&&((pitchRange!==null&&pitchRange<.5)||(pitchRange===null&&target<.54)))return{settled:true,...latest,note:'Progress within .003 and head-pitch range < 0.5° over ≥750ms (or initial overhead route with no spatial pitch yet); visual review remains required.'};
   }
   log('Checkpoint settling timeout after 8s; continuing with lag exposed.',latest,'bad');return{settled:false,...latest};
 }

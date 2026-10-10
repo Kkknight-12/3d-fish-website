@@ -13,6 +13,6 @@ for (const path of ['style.css','app.js','canvas-renderer.js','spine.js','silhou
 if (!html.includes('id="pause"') || !html.includes('id="fish"')) throw new Error('Required experience controls are missing');
 await rm(out,{recursive:true,force:true});
 await mkdir(out,{recursive:true});
-for (const file of ['index.html','style.css','app.js','canvas-renderer.js','view-beat.js','view-renderer.js','eye-atlas.js','volume-raster.js','mouth-barbels.js','pose-3d.js','head-geometry.js','reference-fit.js','body-geometry.js','fin-geometry.js','spatial-painter.js','spine.js','silhouette.js','motion.js','scroll.js','fish-bounds.js','ARTWORK-PROMPT.md','VIEW-PROMPTS.md','assets']) await cp(resolve(root,file),resolve(out,file),{recursive:true});
+for (const file of ['index.html','style.css','story.js','story-state.js','app.js','canvas-renderer.js','view-beat.js','view-renderer.js','eye-atlas.js','volume-raster.js','mouth-barbels.js','pose-3d.js','head-geometry.js','reference-fit.js','body-geometry.js','fin-geometry.js','spatial-painter.js','spine.js','silhouette.js','motion.js','scroll.js','fish-bounds.js','ARTWORK-PROMPT.md','VIEW-PROMPTS.md','assets']) await cp(resolve(root,file),resolve(out,file),{recursive:true});
 await writeFile(resolve(out,'build-info.json'),JSON.stringify({name:'koi-flow-motion-study',builtAt:new Date().toISOString(),dependencies:0},null,2)+'\n');
 console.log('Built Koi Flow into dist/ — static files, no dependencies or external services.');

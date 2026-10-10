@@ -1,18 +1,24 @@
 # Verification scope and remaining limits
 
-Revision 6 retains the closed body, attached pectoral fans, and accepted motion from revision 5. Fixed intrinsic eyes and a single original dorsal forehead material replace the former face/eye chart dissolve.
+The accepted immersive content update retains the fish from approved commit 2314c775b89422d858d6aa4fd51c81d16bcedeff. All 15 protected animation modules match that commit byte-for-byte. Kinetic educational typography, visible water and integrated credits are separate from the preserved fish renderer.
+
+Revision 6 retained the closed body, attached pectoral fans, and accepted motion from revision 5. Fixed intrinsic eyes and a single original dorsal forehead material replaced the former face/eye chart dissolve.
 
 ## Remaining visual limits
 
 - This is a painted 2.5D procedural approximation rather than a fully anatomical skinned model or generated video.
 - Small low-angle muzzle facets and a pale cheek rim near frontal angles remain visible in enlarged crops. The ivory muzzle is simpler than the original illustration.
 - Frontal whiskers now follow the mouth corners. Their delicate tips can be less apparent in downscaled views; they remain an illustrated approximation. The original top-view pair retires before the new pair appears.
-- Broad butterfly fins, flowing tail folds, and average-depth Canvas sorting remain illustrative approximations. Water/background effects remain deferred.
+- Broad butterfly fins, flowing tail folds, and average-depth Canvas sorting remain illustrative approximations. The added water is an illustrative contour/wake effect; further water refinement remains deferred.
 - Spatial WebGL batching remains an unused experimental module; the tested encounter renderer uses Canvas.
 
-## Verification
+## Current immersive verification
 
-66 automated tests, JavaScript syntax checks, and the static build pass. The eye repair preserves the body facets, fin/tail geometry, and protected motion modules. Tests cover finite closed geometry, attached roots, preserved projections/tail, eye-chart metric/tessellation error, and bounded volume raster overlap.
+72 automated tests, JavaScript syntax checks and the static build pass on the Mac. The 34 production files match source bytes and all local HTML/module references resolve. The accepted cloud review covered full native forward/reverse journeys at 1440×900 and 390×844, eight-second frontal idle, identical water/fish pause samples, resume and in-app reduced motion. See REWORK-REVIEW.md for the cloud capture scope. This transfer did not rerun a live Mac browser journey.
+
+## Preserved fish repair verification
+
+The baseline repair passed 66 automated tests, JavaScript syntax checks, and the static build pass. The eye repair preserves the body facets, fin/tail geometry, and protected motion modules. Tests cover finite closed geometry, attached roots, preserved projections/tail, eye-chart metric/tessellation error, and bounded volume raster overlap.
 
 Baseline Mac Chrome checks covered native forward/reverse journeys at 1180×757 and 390×844, the user-reported desktop retreat progress `.911177` (expected 59.138° head pitch), and eight-second frontal idle. Both eyes remained intact in the reviewed forward/reverse retreat captures. Pause froze the swim clock and produced five identical visible-canvas samples; resume and in-app reduced motion passed at 1180×757 and 320×662. Installed browser code and all 31 production files were checked against source/dist/HTTP hashes.
 

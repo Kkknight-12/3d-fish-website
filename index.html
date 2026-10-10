@@ -4,41 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#d8322e">
-  <meta name="description" content="Koi Flow — a living illustration. An original fish artwork with flowing fins, a gentle current, and a little everyday wonder.">
+  <meta name="description" content="An illustrated journey into the freshwater life, movement and next generation of koi. Created by Mayank Sarasiya, with AI assistance.">
   <title>Koi Flow — A living illustration</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Koi Flow — A living illustration">
+  <meta property="og:description" content="Freshwater life, flowing movement, a new generation. An illustrated koi journey by Mayank Sarasiya, with AI assistance.">
+  <meta property="og:image" content="https://3d-fish-website.vercel.app/assets/koi-flow-preview.png">
+  <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Koi Flow: a painted ivory and vermilion koi on a warm red background">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Koi Flow — A living illustration">
+  <meta name="twitter:description" content="An illustrated journey into the freshwater world of koi.">
+  <meta name="twitter:image" content="https://3d-fish-website.vercel.app/assets/koi-flow-preview.png">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23d8322e'/%3E%3Cpath d='M16 40Q32 4 48 24Q60 44 32 44Q8 44 16 24' fill='none' stroke='%23f3eedc' stroke-width='5'/%3E%3C/svg%3E">
   <link rel="preload" as="image" href="assets/koi.webp">
   <link rel="stylesheet" href="style.css">
   <script type="module" src="app.js"></script>
+  <script type="module" src="story.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#controls">Skip to motion controls</a>
   <main id="journey" class="journey" aria-label="Koi Flow, a three-chapter scroll journey">
     <section class="poster" aria-label="Living koi illustration">
+      <canvas id="water" aria-hidden="true"></canvas>
       <header class="masthead">
         <a class="wordmark" href="#journey" aria-label="Koi Flow, return to the surface"><span class="mark" aria-hidden="true">∿</span><span>koi<span class="wordmark-light">flow</span></span></a>
-        <nav class="chapter-nav" aria-label="Journey chapters"><button aria-label="Chapter 1: Flow" data-chapter-target="0" aria-current="step"><span>01</span><span class="chapter-nav-label">Flow</span></button><button aria-label="Chapter 2: Drift" data-chapter-target="0.5"><span>02</span><span class="chapter-nav-label">Drift</span></button><button aria-label="Chapter 3: Wonder" data-chapter-target="0.85"><span>03</span><span class="chapter-nav-label">Wonder</span></button></nav>
+        <nav class="chapter-nav" aria-label="Journey chapters"><button aria-label="Chapter 1: Freshwater" data-chapter-target="0" aria-current="step"><span>01</span><span class="chapter-nav-label">Freshwater</span></button><button aria-label="Chapter 2: Movement" data-chapter-target="0.5"><span>02</span><span class="chapter-nav-label">Movement</span></button><button aria-label="Chapter 3: New life" data-chapter-target="0.85"><span>03</span><span class="chapter-nav-label">New life</span></button></nav>
         <button class="about-link" id="about-open" aria-haspopup="dialog">Behind the flow <span aria-hidden="true">↗</span></button>
       </header>
 
         <article class="chapter" data-chapter="0" aria-labelledby="hero-title">
           <div class="chapter-scenery" aria-hidden="true"><span class="world-number">01</span><div class="scene-orbit"></div><span class="world-line"></span></div>
-          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> FIND YOUR OWN CURRENT</div>
+          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> 01 / A FRESHWATER WORLD</div>
           <h1 id="hero-title" class="chapter-title"><span>STAY</span><span>IN FLOW<span class="title-period">.</span></span></h1>
-          <div class="poem"><span>A little wonder.</span><span>A little every day.</span></div>
-        </article>
+          </article>
         <article class="chapter chapter-drift" data-chapter="1" aria-labelledby="drift-title">
           <div class="chapter-scenery" aria-hidden="true"><span class="world-number">02</span><div class="scene-orbit"></div><span class="world-line"></span></div>
-          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> LET THE CURRENT CARRY YOU</div>
+          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> 02 / BUILT TO MOVE</div>
           <h2 id="drift-title" class="chapter-title"><span>GO</span><span>WITH IT<span class="title-period">.</span></span></h2>
-          <div class="poem"><span>Let go a little.</span><span>Find a new rhythm.</span></div>
-        </article>
+          </article>
         <article class="chapter chapter-wonder" data-chapter="2" aria-labelledby="wonder-title">
           <div class="chapter-scenery" aria-hidden="true"><span class="world-number">03</span><div class="scene-orbit"></div><span class="world-line"></span></div>
-          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> LEAVE ROOM FOR THE UNEXPECTED</div>
+          <div class="eyebrow"><span class="small-star" aria-hidden="true">✳</span> 03 / LIFE GOES ON</div>
           <h2 id="wonder-title" class="chapter-title"><span>MAKE</span><span>SPACE<span class="title-period">.</span></span></h2>
-          <div class="poem"><span>Carry the calm.</span><span>Make something new.</span></div>
-        </article>
+          </article>
+
+
+      <div class="story-world" aria-label="Koi field notes">
+        <div class="kinetic-note habitat-note" data-beat="habitat"><span class="note-index">01 / FRESH WATER</span><p class="note-poetry"><span>A world</span><span>within a pond.</span></p><p class="note-fact">Ornamental carp, selectively bred in Japan.<br>Now at home in ponds and water gardens worldwide.</p><button class="field-link" data-notes="habitat">Explore the field notes +</button></div>
+        <div class="kinetic-note movement-note" data-beat="movement"><span class="note-index">02 / THE ART OF MOVING</span><p class="note-poetry"><span>A wave of life.</span></p><svg class="motion-diagram" viewBox="0 0 320 56" aria-label="A wave travels through the body to the tail"><path class="draw-line" d="M2 28Q27 2 52 28T102 28T152 28T202 28T252 28H306M295 18L307 28L295 38"/><text x="0" y="54">BODY</text><text x="125" y="54">TAIL</text><text x="260" y="54">FLOW</text></svg><p class="note-fact">Body and tail drive the swim.<br>Fins bring balance and direction.</p><button class="field-link" data-notes="movement">Explore the field notes +</button></div>
+        <div class="kinetic-note diet-note" data-beat="movement"><span class="note-index">AN OMNIVORE’S MENU</span><p class="diet-word">Plants.</p><p class="diet-word">Algae.</p><p class="diet-word">Insects.</p></div>
+        <div class="kinetic-note life-note" data-beat="life"><span class="note-index">03 / TIME TO GROW</span><p class="life-number">25<span>–</span>35</p><p class="note-poetry">years of possibility.</p><p class="note-fact">Typical lifespan with proper care.<br><span class="attribution">According to San Diego Zoo.</span></p><button class="field-link" data-notes="life">Explore the field notes +</button></div>
+        <div class="kinetic-note birth-note" data-beat="birth"><span class="note-index">TINY BEGINNINGS</span><p class="note-poetry">Life, all over again.</p><svg class="birth-diagram" viewBox="0 0 320 62" aria-label="Eggs attach to water plants, then hatch into fry. Schematic, not to scale."><path class="plant" d="M25 55L39 3M32 32L12 16M36 20L58 7"/><g class="eggs"><circle cx="28" cy="25" r="5"/><circle cx="43" cy="31" r="5"/><circle cx="45" cy="15" r="4"/></g><path class="draw-line" d="M84 28H204M194 20L204 28L194 36"/><path class="fry" d="M240 28Q265 7 293 28Q265 49 240 28L225 17V39Z"/><circle cx="284" cy="25" r="1.5"/></svg><p class="note-fact">Externally fertilized, sticky eggs cling to plants.<br>From eggs to fry. A new generation begins.</p><button class="field-link" data-notes="birth">Eggs, fry & the research +</button></div>
+        <div class="kinetic-note creator-note" data-beat="credits"><span class="note-index">KEEP YOUR CURIOSITY IN MOTION</span><p class="note-poetry">Thanks for drifting.</p><p class="note-fact">Created by Mayank Sarasiya, with AI assistance</p><nav aria-label="Creator links"><a href="https://dev-projects-hq.vercel.app/" target="_blank" rel="noopener">DevProjects ↗</a><a href="https://mayank-portfolio-seven.vercel.app/" target="_blank" rel="noopener">Portfolio ↗</a><a href="https://github.com/Kkknight-12" target="_blank" rel="noopener">GitHub ↗</a><a href="https://www.linkedin.com/in/knight03/" target="_blank" rel="noopener">LinkedIn ↗</a></nav><p class="art-credit">Original koi artwork generated with OpenAI.<br>A painted Canvas 2.5D experience.</p><button class="field-link" id="story-restart">Drift again ↑</button></div>
+      </div>
 
       <div class="composition" id="stage">
         <span class="side-note">N° 01 &nbsp; / &nbsp; BUTTERFLY KOI</span>
@@ -48,7 +67,7 @@
           <canvas id="encounter" aria-hidden="true"></canvas>
         </div>
         <button class="journey-cue" id="journey-cue"><span class="cue-line" aria-hidden="true"></span><span id="cue-label">Scroll to follow the current</span><span id="cue-arrow" aria-hidden="true">↓</span></button>
-        <span class="chapter-signature" aria-hidden="true">A STUDY IN EVERYDAY WONDER</span>
+        <span class="chapter-signature" aria-hidden="true">A LIVING ILLUSTRATION</span>
       </div>
 
       <footer class="poster-footer">
@@ -58,10 +77,18 @@
           <fieldset class="currents"><legend>Current</legend><div class="current-options"><button class="current" data-current="0.65" aria-pressed="false">Gentle</button><button class="current is-active" data-current="1" aria-pressed="true">Drift</button><button class="current" data-current="1.4" aria-pressed="false">Lively</button></div></fieldset>
           <button class="pause-button" id="pause" aria-label="Pause swimming"><span class="pause-symbol" aria-hidden="true">Ⅱ</span><span class="pause-label">Pause</span></button>
         </div>
-        <span class="footer-note">TAKE A BREATH. KEEP CREATING.</span>
+        <span class="footer-note">FRESH WATER. FRESH PERSPECTIVE.</span>
       </footer>
     </section>
   </main>
+
+
+  <dialog id="field-notes" aria-labelledby="field-title"><button class="close-button" id="field-close" aria-label="Close field notes">×</button><span class="dialog-kicker">KOI FLOW / FIELD NOTES</span><h2 id="field-title">A closer look.</h2>
+    <section id="notes-habitat"><h3>A freshwater world</h3><p>Koi are ornamental carp, selectively bred in Japan for their colors and patterns. Today, they are kept in ponds and water gardens worldwide.</p><a href="https://nationalzoo.si.edu/animals/japanese-koi" target="_blank" rel="noopener">Smithsonian National Zoo ↗</a></section>
+    <section id="notes-movement"><h3>Forage. Flow. Repeat.</h3><p>Koi are omnivores that eat plants, algae and aquatic insects. A wave through the body and tail drives swimming; fins help with stability and steering. This long-finned illustration exaggerates the movement and is not a biological simulation.</p><a href="https://nationalzoo.si.edu/animals/japanese-koi" target="_blank" rel="noopener">Diet · Smithsonian ↗</a><a href="https://www.fisheries.noaa.gov/national/outreach-and-education/fun-facts-about-fascinating-fish" target="_blank" rel="noopener">Movement · NOAA ↗</a></section>
+    <section id="notes-life"><h3>Decades of life</h3><p>San Diego Zoo lists a typical lifespan of 25–35 years with proper care.</p><a href="https://animals.sandiegozoo.org/animals/koi" target="_blank" rel="noopener">San Diego Zoo ↗</a></section>
+    <section id="notes-birth"><h3>Tiny beginnings</h3><p>Koi spawn through external fertilization. Their sticky eggs attach to aquatic vegetation. The eggs-to-fry diagram is schematic and not to scale.</p><a href="https://shellfish.ifas.ufl.edu/wp-content/uploads/Handout-2_SRAC_koi-and-goldfish.pdf" target="_blank" rel="noopener">Spawning · SRAC / UF IFAS ↗</a><details><summary>How many eggs? A closer look</summary><p>Tempero and colleagues (2006) examined 44 ready-to-spawn feral females in New Zealand. Estimates ranged from 29,800 to 771,000 developing eggs. These are study-specific egg counts, not surviving young or a universal number per spawn.</p><a href="https://rsnz.onlinelibrary.wiley.com/doi/10.1080/00288330.2006.9517446" target="_blank" rel="noopener">Read the study ↗</a></details></section>
+  </dialog>
 
   <dialog id="about" aria-labelledby="about-title">
     <button class="close-button" id="about-close" aria-label="Close behind the flow">×</button>

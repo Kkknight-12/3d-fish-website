@@ -1,0 +1,65 @@
+{
+  "baseline_commit": "2314c775b89422d858d6aa4fd51c81d16bcedeff",
+  "protected_modules": {
+    "app.js": {
+      "matches_commit": true,
+      "sha256": "088d62b86b1efe649e1442b6e168016fb4f57a0eaa5e9478958daa11eaeb3507"
+    },
+    "spine.js": {
+      "matches_commit": true,
+      "sha256": "2843e600dd73afa709bdd73ac4f739c223b0599fb8530c51ffe58c019ff3222f"
+    },
+    "view-beat.js": {
+      "matches_commit": true,
+      "sha256": "5e8435e1ef074349a628275835994b59ae9bc3e84b6c6b87dfed1c6fa6d32622"
+    },
+    "scroll.js": {
+      "matches_commit": true,
+      "sha256": "e77712203827e4223d6598dcd8507f2620b2c2e633fcffa6a5d07b873abebbe5"
+    },
+    "motion.js": {
+      "matches_commit": true,
+      "sha256": "ca84f5d7ff4cda6cf148719388c644883094efa7a04d1cd721a2d676ca7a1354"
+    },
+    "reference-fit.js": {
+      "matches_commit": true,
+      "sha256": "1681d2de8fbb6c14ca7ddea99291a81154bc9c9c3c295110e66933f48c3cf800"
+    },
+    "body-geometry.js": {
+      "matches_commit": true,
+      "sha256": "b3c6f14169587aba814c9e6209be45378d9f0022c6c5883bb4e913148d99e106"
+    },
+    "mouth-barbels.js": {
+      "matches_commit": true,
+      "sha256": "771956b4a44505f87608a0dc19525e269e3e7ac34290efcd73de2b1d9b00e9a8"
+    },
+    "eye-atlas.js": {
+      "matches_commit": true,
+      "sha256": "eadeef4d0a626829accbf78a0749d6341a4302e1220794518cd75ef1ce06256a"
+    },
+    "head-geometry.js": {
+      "matches_commit": true,
+      "sha256": "3dc9b450a0e59fa5e887363a029b07abfa53d0665a02294a2a000f6f6f11f4ec"
+    },
+    "fin-geometry.js": {
+      "matches_commit": true,
+      "sha256": "e6018e2e6c988a57a679e854772eaa524c668b9f9b1495c4707d683c98057050"
+    },
+    "pose-3d.js": {
+      "matches_commit": true,
+      "sha256": "b822763aedd3f800e6a8ded526dbd3662d6dbd5d595887e7df21c4cbd8fe9a1a"
+    },
+    "canvas-renderer.js": {
+      "matches_commit": true,
+      "sha256": "fe2eba1da117fd1f5e7ec4aee1e0672af456ac49ad2dbce25c1a269f07abd25f"
+    },
+    "volume-raster.js": {
+      "matches_commit": true,
+      "sha256": "2200fc9ac569d76f24c482f066cd54ff8f60fd372cd9ce46552e2d9731edda13"
+    },
+    "view-renderer.js": {
+      "matches_commit": true,
+      "sha256": "8564e83412ab436651457f6cf09fcd95c0bb25a64a9cb78c08fe0229fec513bb"
+    }
+  }
+}
