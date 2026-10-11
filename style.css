@@ -80,3 +80,12 @@ html{scroll-behavior:auto}.journey{height:auto;padding-bottom:100px;background:l
 .note-poetry,.note-fact,.note-index,.diet-word,.life-number{text-shadow:0 1px 5px #a6232a}
 @media(max-width:640px){.birth-note .note-poetry{display:none}.birth-note{bottom:5%}.creator-note{bottom:3%}.creator-note .note-poetry{font-size:27px;margin-bottom:8px}.creator-note .note-index{font-size:6px}.creator-note nav{gap:10px 15px;margin:10px 0}.creator-note .art-credit{margin:8px 0}.movement-note{bottom:5%}}
 @media(min-width:641px){.movement-note{top:9%;bottom:auto;max-width:300px}.motion-diagram{width:270px}}
+
+#water-surface{position:fixed;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
+
+/* Persistent height-field preview: no decorative moving ribbons. */
+#water{background:none;image-rendering:auto}
+
+.water-optics-ready:not(.water-comparison-off) .fish-layer{filter:drop-shadow(0 13px 9px #7b211b18) url(#koi-water-refraction)}
+
+.source-credits{margin-top:24px;border-top:1px solid #312d272b;padding-top:16px}.source-credits summary{cursor:pointer;font-size:13px;color:var(--red);font-weight:600}.source-credits p{font-size:12px;line-height:1.75}.source-credits a{color:#a32c25;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}.source-credits strong{font-weight:600}

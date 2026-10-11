@@ -1,6 +1,8 @@
 # Verification scope and remaining limits
 
-The accepted immersive content update retains the fish from approved commit 2314c775b89422d858d6aa4fd51c81d16bcedeff. All 15 protected animation modules match that commit byte-for-byte. Kinetic educational typography, visible water and integrated credits are separate from the preserved fish renderer.
+The water feature retains the accepted fish geometry and artwork. Two renderers publish read-only contour, tail and translation observations for an independent persistent heightfield; existing deformation and paint lines are unchanged. Propagation eases between .07 at rest and .18 during body travel without resetting wave state.
+
+The earlier accepted immersive content update retains the fish from approved commit 2314c775b89422d858d6aa4fd51c81d16bcedeff. All 15 protected animation modules match that commit byte-for-byte. Kinetic educational typography, visible water and integrated credits are separate from the preserved fish renderer.
 
 Revision 6 retained the closed body, attached pectoral fans, and accepted motion from revision 5. Fixed intrinsic eyes and a single original dorsal forehead material replaced the former face/eye chart dissolve.
 
@@ -9,10 +11,14 @@ Revision 6 retained the closed body, attached pectoral fans, and accepted motion
 - This is a painted 2.5D procedural approximation rather than a fully anatomical skinned model or generated video.
 - Small low-angle muzzle facets and a pale cheek rim near frontal angles remain visible in enlarged crops. The ivory muzzle is simpler than the original illustration.
 - Frontal whiskers now follow the mouth corners. Their delicate tips can be less apparent in downscaled views; they remain an illustrated approximation. The original top-view pair retires before the new pair appears.
-- Broad butterfly fins, flowing tail folds, and average-depth Canvas sorting remain illustrative approximations. The added water is an illustrative contour/wake effect; further water refinement remains deferred.
+- Broad butterfly fins, flowing tail folds, and average-depth Canvas sorting remain illustrative approximations. The heightfield water is a stylized CPU optical simulation with bounded buffers and sampled forcing. Physical mobile performance remains unverified.
 - Spatial WebGL batching remains an unused experimental module; the tested encounter renderer uses Canvas.
 
-## Current immersive verification
+## Water feature verification
+
+The full source suite has 92 tests, including persistent propagation/decay, immutable-source pixel resampling, finite arrays, bounded catch-up, pause, resize/reset and steady/travel/reverse coupling. Full Mac publication checks use npm test, npm run check and npm run build. Current cloud live findings, including the active-canvas versus aggregate pause distinction and sampled CPU cadence, are documented in HEIGHTFIELD-REVIEW.md. Earlier decorative wake experiments in WATER-PREVIEW-REVIEW.md are superseded.
+
+## Earlier immersive release verification (c4d0459)
 
 72 automated tests, JavaScript syntax checks and the static build pass on the Mac. The 34 production files match source bytes and all local HTML/module references resolve. The accepted cloud review covered full native forward/reverse journeys at 1440×900 and 390×844, eight-second frontal idle, identical water/fish pause samples, resume and in-app reduced motion. See REWORK-REVIEW.md for the cloud capture scope. This transfer did not rerun a live Mac browser journey.
 

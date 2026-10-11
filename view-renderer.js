@@ -1,3 +1,4 @@
+import {convexContour} from './water-motion.js';
 import {createMouthBarbels,projectMouthBarbels,barbelVisibility} from './mouth-barbels.js';
 import {volumeClipPolygon,padVolumeTexture} from './volume-raster.js';
 import {eyeCharts,intrinsicEyeUV,refineEyeSurface,eraseTextureEyes,makeEyeTexture,anatomicalFaceUV,makeIntrinsicSkinAtlas,intrinsicSkinUV} from './eye-atlas.js';
@@ -151,6 +152,7 @@ export function createViewRenderer(canvas,originalImage,frontImage,getLayout,pix
     const visible=diagnostic||beat.active||hasDepth();if(!visible&&!wasVisible)return;
     const now=performance.now();if(visible&&wasVisible&&now-lastDraw<30)return;
     const pose=getLayout(width,height,originalImage);depthColumns(pose.turn,depth,72,columns);
+    canvas.waterTranslation={x:pose.centerX,y:pose.centerY};
     updateFinTrim(ramp(.08,.30,depth.angles[0]),ramp(.22,.30,depth.angles[0]));
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,width,height);
     if(visible){
@@ -169,6 +171,8 @@ export function createViewRenderer(canvas,originalImage,frontImage,getLayout,pix
       computeReferenceFit(referenceFit,pose,columns,seconds,strength,width,height,tx,ty,fitted);
       for(const mesh of meshes)for(const v of mesh.vertices){v.x=v.x*fitted.scale+fitted.x;v.y=v.y*fitted.scale+fitted.y;}
       for(const v of barbels.vertices){v.x=v.x*fitted.scale+fitted.x;v.y=v.y*fitted.scale+fitted.y;}
+      canvas.waterContour=convexContour(volumeMesh.vertices);{const head=volumeMesh.vertices.reduce((a,v)=>v.u>a.u?v:a);canvas.waterHead={x:head.x,y:head.y};}
+      {const tail=meshes[0].vertices.reduce((best,v)=>Math.abs(v.u-.29)+Math.abs(v.v-.5)<Math.abs(best.u-.29)+Math.abs(best.v-.5)?v:best);canvas.waterTail={x:tail.x,y:tail.y};}
       canvas.dataset.barbels=barbelAlpha>0?'mouth-local-pair':'original-painted-pair';canvas.dataset.barbelOpacity=barbelAlpha.toFixed(4);
       canvas.dataset.fittedBounds=JSON.stringify(bounds.map((v,i)=>+(v*fitted.scale+(i%2?fitted.y:fitted.x)).toFixed(2)));
       canvas.dataset.fitScale=fitted.scale.toFixed(4);canvas.dataset.fitReference='preserved-handoff';canvas.dataset.fitOffset=JSON.stringify([fitted.x,fitted.y]);

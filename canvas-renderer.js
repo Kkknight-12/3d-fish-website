@@ -1,3 +1,4 @@
+import {bodyContour} from './body-geometry.js';
 import { LOOP_SECONDS, TAU } from './motion.js';
 import { preparePoint, writePoint, spineColumns } from './spine.js';
 
@@ -60,6 +61,7 @@ export function createCanvasRenderer(canvas,image,getLayout,onFrame,pixelBudget=
     const started=performance.now(),phase=(seconds%LOOP_SECONDS)/LOOP_SECONDS*TAU;
     const pose=getLayout(width,height,image),angle=pose.angle*Math.PI/180+tx*.035;
     if(turnVersion!==pose.turn.version){spineColumns(pose.turn,cols,columns);turnVersion=pose.turn.version;}
+    canvas.waterTranslation={x:pose.centerX,y:pose.centerY};
     const cos=Math.cos(angle),sin=Math.sin(angle),cx=pose.centerX+tx*9,cy=pose.centerY-ty*7;
     for(const vertex of vertices){
       const p=writePoint(vertex.motion,phase,strength,vertex.column,aspect,vertex.local),x=p.x*pose.fishWidth,y=p.y*pose.fishHeight;
@@ -77,6 +79,17 @@ export function createCanvasRenderer(canvas,image,getLayout,onFrame,pixelBudget=
       ctx.closePath();ctx.clip();ctx.transform(a,b,c,d,p.x-a*p.sx-c*p.sy,p.y-b*p.sx-d*p.sy);
       ctx.drawImage(image,t.x,t.y,t.w,t.h,t.x,t.y,t.w,t.h);ctx.restore();
     }
+    // Read-only water anchors: same deformation, independent of fish painting.
+    const sides=[[],[]],waterColumns=spineColumns(pose.turn,72);
+    for(let i=0;i<=18;i++){
+      const u=.40+(.986-.40)*i/18,edge=u<.625?{top:.50-(u-.40)/.225*.079,bottom:.50+(u-.40)/.225*.141}:bodyContour(u,aspect),col=waterColumns.subarray(Math.round(u*72)*4,Math.round(u*72)*4+4);
+      for(let side=0;side<2;side++){
+        const p=writePoint(preparePoint(u,1-(side?edge.bottom:edge.top)),phase,strength,col,aspect,{}),x=p.x*pose.fishWidth,y=p.y*pose.fishHeight;
+        sides[side].push({x:cx+x*cos-y*sin,y:height-cy-x*sin-y*cos});
+      }
+    }
+    canvas.waterHead={...sides[0].at(-1)};canvas.waterContour=sides[0].concat(sides[1].reverse());
+    {const u=.29,col=waterColumns.subarray(Math.round(u*72)*4,Math.round(u*72)*4+4),p=writePoint(preparePoint(u,.5),phase,strength,col,aspect,{}),x=p.x*pose.fishWidth,y=p.y*pose.fishHeight;canvas.waterTail={x:cx+x*cos-y*sin,y:height-cy-x*sin-y*cos};}
     onFrame(phase,strength,pose);
     const cost=performance.now()-started;average=samples?average*.94+cost*.06:cost;samples++;
     // Adapt only at stable boundaries, avoiding frequent mesh switches.

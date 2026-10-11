@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {createWaterMotion,wakePoints,convexContour} from '../water-motion.js';
+const body=Array.from({length:40},(_,i)=>({x:200+100*Math.cos(i/40*Math.PI*2),y:200+25*Math.sin(i/40*Math.PI*2)}));
+test('shed wakes retain birth geometry and remain open',()=>{const m=createWaterMotion(),p=m.update(body,0)[0],saved=JSON.stringify(p.points);assert.ok(p.points.length<body.length*.5);m.update(body.map(p=>({x:p.x+300,y:p.y})),.3);assert.equal(JSON.stringify(p.points),saved);assert.notDeepEqual(wakePoints(p,0),wakePoints(p,1));});
+test('water history is bounded and dies in deep glide',()=>{const m=createWaterMotion();for(let t=0;t<200;t+=.1)assert.ok(m.update(body,t).length<=5);assert.equal(m.update(body,210,{depth:80}).length,0);});
+test('reduced motion clears wakes and resume/reset has no stale trails',()=>{const m=createWaterMotion();m.update(body,0);assert.equal(m.update(body,1,{reduced:true}).length,0);m.reset();assert.equal(m.packets.length,0);assert.equal(m.update(body,1).length,1);});
+test('pause holds packet geometry at frozen time',()=>{const m=createWaterMotion();m.update(body,0);const a=JSON.stringify(m.update(body,1));for(let i=0;i<20;i++)assert.equal(JSON.stringify(m.update(body,1)),a);});
+test('projected body hull ignores interior and nonfinite vertices',()=>{const hull=convexContour([{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1},{x:.5,y:.5},{x:NaN,y:0}]);assert.equal(hull.length,4);assert.ok(hull.every(p=>Number.isFinite(p.x)));});
+
+test('every wake sample retains finite outward normals',()=>{const m=createWaterMotion();const p=m.update(body,0)[0];for(const t of [0,.2,1,2.7])for(const sample of wakePoints(p,t))for(const key of ['x','y','nx','ny','edge'])assert.ok(Number.isFinite(sample[key]),key);});
+test('reflection coordinates remain finite and visibly displaced after wake creation',async()=>{const {distortReflection}=await import('../water-motion.js');const m=createWaterMotion(),packet=m.update(body,0)[0],points=wakePoints(packet,.5),wakes=[{packet,points,fade:.8}];let maximum=0;for(let y=140;y<=260;y+=10)for(let x=80;x<=320;x+=10){const result=distortReflection(x,y,wakes);assert.ok(Number.isFinite(result));maximum=Math.max(maximum,Math.abs(result-y));}assert.ok(maximum>2,`Expected measurable visible light displacement, got ${maximum}`);});
